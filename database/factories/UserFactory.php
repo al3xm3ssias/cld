@@ -63,7 +63,7 @@ class UserFactory extends Factory
     }
 
     private function getProfile() : string {
-        $profiles = ['administrator','user','professor','student'];
+        $profiles = ['admin','user','professor','student'];
         shuffle($profiles);
         return $profiles[0];
     }
