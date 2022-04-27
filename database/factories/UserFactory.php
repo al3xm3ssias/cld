@@ -25,7 +25,7 @@ class UserFactory extends Factory
         $email = $this->faker->unique()->safeEmail();
         $gender = $this->getGender();
         return [
-            'name' => $this->faker->name($gender),
+            'nome' => $this->faker->name($gender),
             'email' => $email,
             'email_verified_at' => now(),
             'password' => bcrypt($email), // email

@@ -18,64 +18,56 @@
     @php( $password_reset_url = $password_reset_url ? url($password_reset_url) : '' )
 @endif
 
-@section('auth_header', __('adminlte::adminlte.login_message'))
+@section('auth_header', __('Faça o login para acessar o sistema'))
 
 @section('auth_body')
     <form action="{{ $login_url }}" method="post">
-        @csrf
+        {{ csrf_field() }}
 
         {{-- Email field --}}
         <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+            <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
                    value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
-
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
-
-            @error('email')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
+            @if($errors->has('email'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('email') }}</strong>
+                </div>
+            @endif
         </div>
 
         {{-- Password field --}}
         <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}">
-
+            <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
+                   placeholder="{{ __('Senha') }}">
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
-
-            @error('password')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
+            @if($errors->has('password'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('password') }}</strong>
+                </div>
+            @endif
         </div>
 
         {{-- Login field --}}
         <div class="row">
             <div class="col-7">
-                <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
-                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                    <label for="remember">
-                        {{ __('adminlte::adminlte.remember_me') }}
-                    </label>
+                <div class="icheck-primary">
+                    <input type="checkbox" name="remember" id="remember">
+                    <label for="remember">{{ __('Lembre-me') }}</label>
                 </div>
             </div>
-
             <div class="col-5">
                 <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
                     <span class="fas fa-sign-in-alt"></span>
-                    {{ __('adminlte::adminlte.sign_in') }}
+                    {{ __('Entrar') }}
                 </button>
             </div>
         </div>
@@ -88,17 +80,18 @@
     @if($password_reset_url)
         <p class="my-0">
             <a href="{{ $password_reset_url }}">
-                {{ __('adminlte::adminlte.i_forgot_my_password') }}
+                {{ __('Esqueci minha senha') }}
             </a>
         </p>
     @endif
-
-    {{-- Register link --}}
+{{--
+    {{-- Register link
     @if($register_url)
         <p class="my-0">
             <a href="{{ $register_url }}">
-                {{ __('adminlte::adminlte.register_a_new_membership') }}
+                {{ __('Não tenho acesso') }}
             </a>
         </p>
-    @endif
+    @endif --}}
 @stop
+

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,15 +15,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('adminlte::auth.login');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => 'auth'], function () {
 
-Auth::routes();
+Route::resource('home', 'App\Http\Controllers\HomeController');
 
-Route::get('/home', function() {
-    return view('home');
-})->name('home')->middleware('auth');
+Route::resource('laboratorios', 'App\Http\Controllers\LaboratorioController');
+
+Route::resource('reservas', 'App\Http\Controllers\ReservaController');
+
+Route::resource('solicitante', 'App\Http\Controllers\SolicitanteController');
+
+Route::resource('users', 'App\Http\Controllers\UsersController');
+
+Route::resource('disciplinas', 'App\Http\Controllers\DisciplinaController');
+
+Route::get('/calendario', [\App\Http\Controllers\CalendarioController::class, 'index']);
+
+Route::get('/calendario/buscaReservasLab' , 'App\Http\Controllers\CalendarioController@buscaReservasLab')->name('calendario.buscaReservasLab');
+
+Route::get('/calendario/mostrar', [\App\Http\Controllers\CalendarioController::class, 'show']);
+
+
+
+
+});

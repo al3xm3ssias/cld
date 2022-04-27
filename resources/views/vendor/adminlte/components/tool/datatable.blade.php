@@ -1,6 +1,6 @@
 {{-- Table --}}
 
-<div class="table-responsive">
+<div class="table">
 
 <table id="{{ $id }}" style="width:100%" {{ $attributes->merge(['class' => $makeTableClass()]) }}>
 
@@ -30,6 +30,7 @@
         </tfoot>
     @endisset
 
+
 </table>
 
 </div>
@@ -39,9 +40,32 @@
 @push('js')
 <script>
 
-    $(() => {
+    /*$(() => {
         $('#{{ $id }}').DataTable( @json($config) );
-    })
+            dom: 'Bfrtip',
+            buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ]
+    }); */
+
+    $(document).ready(function() {
+        $('#{{ $id }}'.DataTable( {
+        //dom: 'Bfrtip',
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ]
+    } );
+} );
+
+
+
+
 
 </script>
 @endpush

@@ -5,6 +5,6 @@
     {{-- Textarea --}}
     <textarea id="{{ $id }}" name="{{ $name }}"
         {{ $attributes->merge(['class' => $makeItemClass()]) }}
-    >{{ $getOldValue($errorKey, $slot) }}</textarea>
+    >{{ $slot }}</textarea>
 
 @overwrite

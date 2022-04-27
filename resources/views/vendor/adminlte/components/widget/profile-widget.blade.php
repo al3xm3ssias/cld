@@ -6,7 +6,7 @@
         {{-- User image --}}
         <div class="widget-user-image">
             @if(isset($img))
-                <img class="img-circle elevation-2" src="{{ $img }}" alt="User avatar: {{ $name }}">
+                <img class="img-circle elevation-2" src="{{ $img }}" alt="User avatar: {{ $nome }}">
             @elseif($layoutType === 'modern')
                 <div class="img-circle elevation-2 d-flex bg-dark" style="width:90px;height:90px;">
                     <i class="fas fa-3x fa-user text-silver m-auto"></i>

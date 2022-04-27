@@ -1,5 +1,5 @@
 @foreach(config('adminlte.plugins') as $pluginName => $plugin)
-    @if($plugin['active'] || View::getSection('plugins.' . ($plugin['name'] ?? $pluginName)))
+    @if($plugin['active'] || View::getSection('plugins.' . ($plugin['nome'] ?? $pluginName)))
         @foreach($plugin['files'] as $file)
 
             {{-- Setup the file location  --}}

@@ -17,23 +17,6 @@
 
     $(() => {
         $('#{{ $id }}').select2( @json($config) );
-
-        // Add support to auto select old submitted values in case of
-        // validation errors.
-
-        @if($errors->any() && $enableOldSupport)
-
-            let oldOptions = @json(collect($getOldValue($errorKey)));
-
-            $('#{{ $id }} option').each(function()
-            {
-                let value = $(this).val() || $(this).text();
-                $(this).prop('selected', oldOptions.includes(value));
-            });
-
-            $('#{{ $id }}').trigger('change');
-
-        @endif
     })
 
 </script>

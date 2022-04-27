@@ -30,14 +30,14 @@
 
         {{-- Lockscreen user name --}}
         <div class="lockscreen-name">
-            {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }}
+            {{ isset(Auth::user()->nome) ? Auth::user()->nome : Auth::user()->email }}
         </div>
 
         {{-- Lockscreen item --}}
         <div class="lockscreen-item">
             @if(config('adminlte.usermenu_image'))
                 <div class="lockscreen-image">
-                    <img src="{{ Auth::user()->adminlte_image() }}" alt="{{ Auth::user()->name }}">
+                    <img src="{{ Auth::user()->adminlte_image() }}" alt="{{ Auth::user()->nome }}">
                 </div>
             @endif
 
@@ -46,10 +46,9 @@
                 @csrf
 
                 <div class="input-group">
-                    <input id="password" type="password" name="password"
+                    <input id="password" type="password" name="password" autocomplete="current-password"
                            class="form-control @error('password') is-invalid @enderror"
                            placeholder="{{ __('adminlte::adminlte.password') }}" required autofocus>
-
                     <div class="input-group-append">
                         <button type="submit" class="btn">
                             <i class="fas fa-arrow-right text-muted"></i>

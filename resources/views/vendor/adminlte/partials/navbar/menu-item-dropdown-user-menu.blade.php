@@ -20,10 +20,10 @@
         @if(config('adminlte.usermenu_image'))
             <img src="{{ Auth::user()->adminlte_image() }}"
                  class="user-image img-circle elevation-2"
-                 alt="{{ Auth::user()->name }}">
+                 alt="{{ Auth::user()->nome }}">
         @endif
         <span @if(config('adminlte.usermenu_image')) class="d-none d-md-inline" @endif>
-            {{ Auth::user()->name }}
+            {{ Auth::user()->nome }}
         </span>
     </a>
 
@@ -32,15 +32,15 @@
 
         {{-- User menu header --}}
         @if(!View::hasSection('usermenu_header') && config('adminlte.usermenu_header'))
-            <li class="user-header {{ config('adminlte.usermenu_header_class', 'bg-primary') }}
+            <li class="user-header {{ config('adminlte.usermenu_header_class', 'bg-danger') }}
                 @if(!config('adminlte.usermenu_image')) h-auto @endif">
                 @if(config('adminlte.usermenu_image'))
                     <img src="{{ Auth::user()->adminlte_image() }}"
                          class="img-circle elevation-2"
-                         alt="{{ Auth::user()->name }}">
+                         alt="{{ Auth::user()->nome }}">
                 @endif
                 <p class="@if(!config('adminlte.usermenu_image')) mt-0 @endif">
-                    {{ Auth::user()->name }}
+                    {{ Auth::user()->nome }}
                     @if(config('adminlte.usermenu_desc'))
                         <small>{{ Auth::user()->adminlte_desc() }}</small>
                     @endif
@@ -64,13 +64,13 @@
         <li class="user-footer">
             @if($profile_url)
                 <a href="{{ $profile_url }}" class="btn btn-default btn-flat">
-                    <i class="fa fa-fw fa-user text-lightblue"></i>
+                    <i class="fa fa-fw fa-user"></i>
                     {{ __('adminlte::menu.profile') }}
                 </a>
             @endif
             <a class="btn btn-default btn-flat float-right @if(!$profile_url) btn-block @endif"
                href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fa fa-fw fa-power-off text-red"></i>
+                <i class="fa fa-fw fa-power-off"></i>
                 {{ __('adminlte::adminlte.log_out') }}
             </a>
             <form id="logout-form" action="{{ $logout_url }}" method="POST" style="display: none;">
