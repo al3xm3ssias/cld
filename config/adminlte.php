@@ -129,7 +129,7 @@ return [
     'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-dark navbar-dark',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 
@@ -225,12 +225,22 @@ return [
     |
     */
 
+
+
     'menu' => [
         // Navbar items:
         [
             'type'         => 'navbar-search',
             'text'         => 'search',
             'topnav_right' => false,
+        ],
+        [
+            'type'           => 'darkmode-widget',
+            'topnav_right'   => true, // Or "topnav => true" to place on the left.
+            'icon_enabled'   => 'fas fa-moon',
+            'icon_disabled'  => 'fas fa-sun',
+             'color_enabled'  => 'black',
+            'color_disabled' => 'yellow'
         ],
         [
             'type'         => 'fullscreen-widget',

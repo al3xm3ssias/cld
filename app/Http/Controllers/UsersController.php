@@ -18,10 +18,10 @@ class UsersController extends Controller
 
     public function index(){
 
-    $usuarios = User::paginate();
+    $usuarios = User::all();
 
         return view('usuario.index', compact('usuarios'))
-            ->with('i', (request()->input('page', 1) - 1) * $usuarios->perPage());
+            ;
     }
 
     public function create(){
@@ -33,7 +33,7 @@ class UsersController extends Controller
 
     public function store(Request $request){
 
-        request()->validate(User::$rules_create);
+        request()->validate(User::$rules);
 
         $usuarios = User::create($request->merge(['password' => Hash::make($request->get('password'))])->all());
 

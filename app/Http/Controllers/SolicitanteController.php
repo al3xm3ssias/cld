@@ -111,7 +111,7 @@ class SolicitanteController extends Controller
 
     }
 
-    public function gerarcracha($id){
+    /*public function gerarcracha($id){
 
         $data = Solicitante::find($id);
 
@@ -126,5 +126,5 @@ class SolicitanteController extends Controller
 
         return $pdf->stream($data->nome.'.pdf');
 
-   }
+   }*/
 }
