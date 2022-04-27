@@ -32,5 +32,5 @@ A usuário e senha de acesso ao sistema é admin@admin.com
 
 ## Autor
 
-[<img src="https://avatars.githubusercontent.com/u/93291578?s=40&v=4" width=115><br><sub>Cladio Alex Messias da Rosa</sub>](https://github.com/al3xm3ssias)
+[<img src="https://avatars.githubusercontent.com/u/93291578?&v=4" width=115><br><sub>Cladio Alex Messias da Rosa</sub>](https://github.com/al3xm3ssias)
 
