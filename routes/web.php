@@ -40,7 +40,7 @@ Route::get('/calendario/buscaReservasLab' , 'App\Http\Controllers\CalendarioCont
 
 Route::get('/calendario/mostrar', [\App\Http\Controllers\CalendarioController::class, 'show']);
 
-
+Route::get('/reservas/{id}/alterar_status','App\Http\Controllers\ReservaController@alterarStatus')->name('reserva.alterar.status');
 
 
 });

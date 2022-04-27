@@ -21,7 +21,15 @@
                         <div class="col-md-12" id="div_erros">
 
                                 @foreach ($dadosReserva as $item)
-                                    <div class="alert alert-info">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <button type="button" class="btn btn-info btn-sm float-right" id="reload">Fechar</button>
+                                          <span  class="text"></b> Existe uma reserva para este horario:</b> Horário: {{date('d/m/Y', strtotime($item->start))}} - {{date('H:i', strtotime($item->start))}} - {{date('H:i', strtotime($item->end))}}, Solicitante : {{$item->nomeSolicitante}}.
+                                            </span>
+                                    </div>
+
+                                @endforeach
+                                @foreach ($dadosReserva2 as $item)
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         <button type="button" class="btn btn-info btn-sm float-right" id="reload">Fechar</button>
                                           <span  class="text"></b> Existe uma reserva para este horario:</b> Horário: {{date('d/m/Y', strtotime($item->start))}} - {{date('H:i', strtotime($item->start))}} - {{date('H:i', strtotime($item->end))}}, Solicitante : {{$item->nomeSolicitante}}.
                                             </span>
@@ -377,6 +385,16 @@
 
 
     });
+</script>
+
+<script>
+
+$(document).ready(function() {
+    // show the alert
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 2000);
+});
 </script>
 
 

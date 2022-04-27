@@ -40,6 +40,7 @@ class ReservaController extends Controller
     {
         $dadosErro = array();
         $dadosReserva = array();
+        $dadosReserva2 = array();
         $solicitantes_professores = DB::select('select * from solicitantes where tipo_solicitante_id = 1');
         $solicitantes_externo = DB::select('select * from solicitantes where tipo_solicitante_id = 4');
         $solicitantes_academicos = DB::select('select * from solicitantes where tipo_solicitante_id = 2');
@@ -47,7 +48,7 @@ class ReservaController extends Controller
         $disciplinas = DB::select('select *from disciplinas where id > 2');
         $tipo_reserva = DB::select('select * from tipo_reserva where id = 1 or id = 2');
 
-        return view('reserva.create', ['dadosErro' =>$dadosErro,'dadosReserva' =>$dadosReserva,'solicitantes_professores'=> $solicitantes_professores,'solicitantes_externos' => $solicitantes_externo,'solicitantes_academicos'=>$solicitantes_academicos, 'tipo_reserva' =>$tipo_reserva , 'disciplinas' =>$disciplinas, 'laboratorios'=>$laboratorios]);
+        return view('reserva.create', ['dadosErro' =>$dadosErro,'dadosReserva' =>$dadosReserva,'dadosReserva2' =>$dadosReserva2,'solicitantes_professores'=> $solicitantes_professores,'solicitantes_externos' => $solicitantes_externo,'solicitantes_academicos'=>$solicitantes_academicos, 'tipo_reserva' =>$tipo_reserva , 'disciplinas' =>$disciplinas, 'laboratorios'=>$laboratorios]);
     }
 
     public function store(Request $request, Reserva $reserva){
@@ -64,8 +65,6 @@ class ReservaController extends Controller
         $tipo_reserva_externo = 2;
         $tipo_reserva_academico = 3;
         $dadosErro = 0;
-
-
 
         if($request->tipo_reserva == $tipo_reserva_disciplina){
 
@@ -100,7 +99,21 @@ class ReservaController extends Controller
                     ->orderBy('start', 'asc')
                     ->get();
 
-                        if ($dadosReserva == '[]') {
+
+
+                    $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                    ->whereBetween('start', [$inicio, $terminoAula])
+                    ->orwhereBetween('end', [$inicio, $terminoAula])
+                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                    ->orderBy('start', 'desc')
+                    ->get();
+
+                    //return response()->json($dadosReserva2);
+
+                        if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -129,7 +142,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                         return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
 
@@ -141,16 +154,30 @@ class ReservaController extends Controller
                 }elseif(strstr($turnoTarde, $turno) !== False){
 
                     $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                        ->where('start','<=',$inicio)
-                        ->where('end','>=', $terminoAula)
-                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                        ->orderBy('start', 'asc')
-                        ->get();
+                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                    ->where('start','<=',$inicio)
+                    ->where('end','>=', $terminoAula)
+                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                    ->orderBy('start', 'asc')
+                    ->get();
 
-                        if ($dadosReserva == '[]') {
+
+
+                    $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                    ->whereBetween('start', [$inicio, $terminoAula])
+                    ->orwhereBetween('end', [$inicio, $terminoAula])
+                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                    ->orderBy('start', 'desc')
+                    ->get();
+
+                    //return response()->json($dadosReserva2);
+
+                        if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -179,25 +206,38 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                         return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
 
                 }
 
                 elseif(strstr($turnoNoite, $turno) !== False){
-                    //return response()->json($turnos);
                     $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                        ->where('start','<=',$inicio)
-                        ->where('end','>=', $terminoAulaN)
-                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                        ->orderBy('start', 'asc')
-                        ->get();
+                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                    ->where('start','<=',$inicio)
+                    ->where('end','>=', $terminoAula)
+                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                    ->orderBy('start', 'asc')
+                    ->get();
 
-                        if ($dadosReserva == '[]') {
+
+
+                    $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                    ->whereBetween('start', [$inicio, $terminoAula])
+                    ->orwhereBetween('end', [$inicio, $terminoAula])
+                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                    ->orderBy('start', 'desc')
+                    ->get();
+
+                    //return response()->json($dadosReserva2);
+
+                        if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -226,7 +266,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                         return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
                     }
@@ -242,7 +282,7 @@ class ReservaController extends Controller
                 //$data = \Carbon\Carbon::createFromFormat('Y-m-d H:i',$request->hora_inicio)->format('Y-m-d');
 
 
-                $horaInicio =  Carbon::createFromFormat('d/m/Y H:i', $request->hora_inicio)->format('H:i');
+                $horaInicio =  Carbon::createFromFormat('d/m/Y H:i', $request->hora_inicio)->format('Y-m-d H:i');
                // $horaFim =  Carbon::createFromFormat('d/m/Y H:i', $request->hora_fim)->format('H:i');
 
                 $dataInicio = $data;
@@ -260,22 +300,24 @@ class ReservaController extends Controller
                     if(strstr($turnoManha, $turno) !== False){
 
 
-                for ($i = 0; $i < $semanas; $i++) {
+                        for ($i = 0; $i < $semanas; $i++) {
 
-                    $dataReserva = date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($dataInicio)));
-
-
-                    $terminoAula =  date('Y-m-d H:i', strtotime('+' . 50*($request->QtdAulas) . 'minutes', strtotime($horaInicio)));
+                            $dataReserva = date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($dataInicio)));
 
 
-                    $horaIniReserva = date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($terminoAula)));
-
-                    $horaFimReserva =date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($terminoAula)));
+                            $terminoAula =  date('Y-m-d H:i', strtotime('+' . 50*($request->QtdAulas) . 'minutes', strtotime($horaInicio)));
 
 
+                            $horaIniReserva = date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($horaInicio)));
+
+                            $horaFimReserva =date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($terminoAula)));
 
 
-                    $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+
+
+
+
+                        $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
                         ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
                         ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
                         ->join('users', 'users.id', '=', 'reserva.usuario_id')
@@ -285,7 +327,21 @@ class ReservaController extends Controller
                         ->orderBy('start', 'asc')
                         ->get();
 
-                    if ($dadosReserva == '[]') {
+
+
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
+
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -312,7 +368,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
 
                 }
@@ -342,7 +398,21 @@ class ReservaController extends Controller
                         ->orderBy('start', 'asc')
                         ->get();
 
-                    if ($dadosReserva == '[]') {
+
+
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
+
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -369,7 +439,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
 
                 }
@@ -392,16 +462,30 @@ class ReservaController extends Controller
                     $horaFimReserva =date('Y-m-d H:i', strtotime('+' . $i . 'weeks', strtotime($terminoAula)));
 
                     $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                    ->where('start','<=',$horaIniReserva)
-                    ->where('end','>=', $horaFimReserva)
-                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                    ->orderBy('start', 'asc')
-                    ->get();
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->where('start','<=',$horaIniReserva)
+                        ->where('end','>=', $horaFimReserva)
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'asc')
+                        ->get();
 
-                if ($dadosReserva == '[]') {
+
+
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
+
+                        //return response()->json($horaInicio);
+
+                        if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                         $reserva = new Reserva();
                         $reserva->laboratorio_id = $request->laboratorio_id;
                         $reserva->usuario_id = $request->usuario_id;
@@ -428,7 +512,7 @@ class ReservaController extends Controller
 
 
                         //return response()->json($dadosErro);
-                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                     }
 
             }
@@ -487,8 +571,19 @@ class ReservaController extends Controller
 
 
 
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
 
-                        if ($dadosReserva == '[]') {
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -515,7 +610,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                     }
                     return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
@@ -533,20 +628,32 @@ class ReservaController extends Controller
 
                         $horaIniReserva = date('Y-m-d H:i', strtotime('+' . $i . 'days', strtotime($inicio)));
                         $horaFimReserva =date('Y-m-d H:i', strtotime('+' . $i . 'days', strtotime($terminoAula)));
+
                         $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                                    ->where('start','<=',$horaIniReserva)
-                                    ->where('end','>=', $horaFimReserva)
-                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                                    ->orderBy('start', 'asc')
-                                    ->get();
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->where('start','<=',$horaIniReserva)
+                        ->where('end','>=', $horaFimReserva)
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'asc')
+                        ->get();
 
 
 
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
 
-                        if ($dadosReserva == '[]') {
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -573,7 +680,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                     }
                     return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
@@ -594,19 +701,30 @@ class ReservaController extends Controller
                         $horaFimReserva =date('Y-m-d H:i', strtotime('+' . $i . 'days', strtotime($terminoAula)));
 
                         $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                                    ->where('start','<=',$horaIniReserva)
-                                    ->where('end','>=', $horaFimReserva)
-                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                                    ->orderBy('start', 'asc')
-                                    ->get();
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->where('start','<=',$horaIniReserva)
+                        ->where('end','>=', $horaFimReserva)
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'asc')
+                        ->get();
 
 
 
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
 
-                        if ($dadosReserva == '[]') {
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                             $reserva = new Reserva();
                             $reserva->laboratorio_id = $request->laboratorio_id;
                             $reserva->usuario_id = $request->usuario_id;
@@ -633,7 +751,7 @@ class ReservaController extends Controller
 
 
                             //return response()->json($dadosErro);
-                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                            return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                         }
                     }
                     return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
@@ -662,18 +780,30 @@ class ReservaController extends Controller
 
 
                                     $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                                    ->where('start','<=',$inicio)
-                                    ->where('end','>=', $termino)
-                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                                    ->orderBy('start', 'asc')
-                                    ->get();
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->where('start','<=',$inicio)
+                        ->where('end','>=', $termino)
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'asc')
+                        ->get();
 
-                                        echo($request->solicitante_id_externo);
 
-                                        if ($dadosReserva == '[]') {
+
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$inicio, $termino])
+                        ->orwhereBetween('end', [$inicio, $termino])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
+
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                                             $reserva = new Reserva();
                                             $reserva->laboratorio_id = $request->laboratorio_id;
                                             $reserva->usuario_id = $request->usuario_id;
@@ -733,16 +863,30 @@ class ReservaController extends Controller
 
 
                                     $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                                    ->where('start','<=',$horaIniReserva)
-                                    ->where('end','>=', $horaFimReserva)
-                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                                    ->orderBy('start', 'asc')
-                                    ->get();
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->where('start','<=',$horaIniReserva)
+                        ->where('end','>=', $horaFimReserva)
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'asc')
+                        ->get();
 
-                                    if ($dadosReserva == '[]') {
+
+
+                        $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                        ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                        ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                        ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                        ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                        ->orderBy('start', 'desc')
+                        ->get();
+
+                        //return response()->json($horaInicio);
+
+                            if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                                         $reserva = new Reserva();
                                         $reserva->laboratorio_id = $request->laboratorio_id;
                                         $reserva->usuario_id = $request->usuario_id;
@@ -767,7 +911,7 @@ class ReservaController extends Controller
 
 
                                         //return response()->json($dadosErro);
-                                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                                     }
 
                                 }
@@ -800,17 +944,31 @@ class ReservaController extends Controller
                                     $horaFimReserva =date('Y-m-d H:i:s', strtotime('+' . $i . 'days', strtotime($termino)));
 
 
-                                                    $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
-                                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-                                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-                                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
-                                                    ->where('start','<=',$horaIniReserva)
-                                                    ->where('end','>=', $horaFimReserva)
-                                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
-                                                    ->orderBy('start', 'asc')
-                                                    ->get();
+                                    $dadosReserva = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                                    ->where('start','<=',$horaIniReserva)
+                                    ->where('end','>=', $horaFimReserva)
+                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                                    ->orderBy('start', 'asc')
+                                    ->get();
 
-                                    if ($dadosReserva == '[]') {
+
+
+                                    $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                                    ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                                    ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                                    ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                                    ->whereBetween('start', [$horaIniReserva, $horaFimReserva])
+                                    ->orwhereBetween('end', [$horaIniReserva, $horaFimReserva])
+                                    ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                                    ->orderBy('start', 'desc')
+                                    ->get();
+
+                                    //return response()->json($horaInicio);
+
+                                        if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                                         $reserva = new Reserva();
                                         $reserva->laboratorio_id = $request->laboratorio_id;
                                         $reserva->usuario_id = $request->usuario_id;
@@ -836,7 +994,7 @@ class ReservaController extends Controller
 
 
                                         //return response()->json($dadosErro);
-                                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                                        return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                                     }
                                     }
                                     return redirect()->route('reservas.index')->with('success', 'Reserva externa diaria criada com sucesso.');
@@ -870,9 +1028,21 @@ class ReservaController extends Controller
                                 ->orderBy('start', 'asc')
                                 ->get();
 
-                           //return response()->json($dadosReserva3);
 
-                                if ($dadosReserva == '[]') {
+
+                                $dadosReserva2 = DB::table('reserva')->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio')
+                                ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
+                                ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
+                                ->join('users', 'users.id', '=', 'reserva.usuario_id')
+                                ->whereBetween('start', [$inicio, $termino])
+                                ->orwhereBetween('end', [$inicio, $termino])
+                                ->where('reserva.laboratorio_id', '=', $request->laboratorio_id)
+                                ->orderBy('start', 'desc')
+                                ->get();
+
+                                //return response()->json($horaInicio);
+
+                                    if ($dadosReserva == '[]' && $dadosReserva2 == '[]') {
                                     $reserva = new Reserva();
                                     $reserva->laboratorio_id = $request->laboratorio_id;
                                     $reserva->usuario_id = $request->usuario_id;
@@ -901,13 +1071,19 @@ class ReservaController extends Controller
 
 
                                     //return response()->json($dadosErro);
-                                    return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
+                                    return view('reserva.create',['solicitantes_academicos'=>$solicitantes_academicos,'dadosReserva'=> $dadosReserva,'dadosReserva2'=> $dadosReserva2,'dadosErro'=>$dadosErro, 'laboratorios' => $laboratorios, 'disciplinas' => $disciplinas, 'solicitantes_professores'=>$solicitantes_professores, 'solicitantes_externos'=>$solicitantes_externos]);
                                 }
                                 return redirect()->route('reservas.index')->with('success', 'Reserva criada com sucesso.');
 
 
 
                         }
+
+
+
+
+
+
 
 }
 

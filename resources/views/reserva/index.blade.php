@@ -348,6 +348,16 @@
        });
 </script>
 
+<script>
+
+    $(document).ready(function() {
+        // show the alert
+        setTimeout(function() {
+            $(".alert").alert('close');
+        }, 2000);
+    });
+    </script>
+
 {{--
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
