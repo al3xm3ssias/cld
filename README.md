@@ -27,3 +27,10 @@ php artisan migrate:fresh --seed
 Para que o banco de dados seja resetado e populado, por padrão o CLD cria 1000 usuários ficticios e um usuário Admin, caso queira alterar a quantidade entre no arquivo [DatabaseSeeder.php](https://github.com/al3xm3ssias/cld/blob/master/database/seeders/DatabaseSeeder.php). 
 
 A usuário e senha de acesso ao sistema é admin@admin.com
+
+
+
+## Autores
+
+| [<img src="https://avatars.githubusercontent.com/u/93291578?s=40&v=4" width=115><br><sub>Cladio Alex Messias da Rosa</sub>](https://github.com/al3xm3ssias) |
+| :---: | :---: | :---: |
