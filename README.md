@@ -10,19 +10,19 @@ Clone o repositorio
 
 Execute o seguinte comando
 
-composer install 
+``composer install``
 
 Após isso execute este comando
 
-cp .env-example .env 
+``cp .env-example .env``
 
-php artisan key:generate
+``php artisan key:generate``
 
 Altere as variais de banco de dados no arquivo .env
 
 e execute este comendo
 
-php artisan migrate:fresh --seed 
+``php artisan migrate:fresh --seed`` 
 
 Para que o banco de dados seja resetado e populado, por padrão o CLD cria 1000 usuários ficticios e um usuário Admin, caso queira alterar a quantidade entre no arquivo [DatabaseSeeder.php](https://github.com/al3xm3ssias/cld/blob/master/database/seeders/DatabaseSeeder.php). 
 
