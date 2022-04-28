@@ -21,8 +21,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-
-
 Route::group(['middleware' => 'auth'], function () {
 
 Route::resource('home', 'App\Http\Controllers\HomeController');
