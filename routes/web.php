@@ -18,6 +18,7 @@ Route::get('/', function () {
     return view('adminlte::auth.login');
 });
 
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
