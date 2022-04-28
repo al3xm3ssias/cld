@@ -30,5 +30,23 @@ class AuthServiceProvider extends ServiceProvider
                         ? true
                         : false;
         });
+
+        Gate::define('is_student', function ($user) {
+            return $user->profile=='student'
+                        ? true
+                        : false;
+        });
+
+        Gate::define('is_user', function ($user) {
+            return $user->profile=='user'
+                        ? true
+                        : false;
+        });
+
+        Gate::define('is_professor', function ($user) {
+            return $user->profile=='professor'
+                        ? true
+                        : false;
+        });
     }
 }

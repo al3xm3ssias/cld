@@ -253,14 +253,34 @@ return [
             'text' => 'search',
         ], */
 
+        [
+            'text' => 'Home',
+            'url'  => 'home',
+            'icon' => 'fa fa-home',
+           
+        ],
 
-        ['header' => 'Reservas', 'can' => 'is_admin',],
+        ['header' => 'Reservas', 'can' => 'is_admin' || 'is_user',],
 
         [
             'text' => 'Reservas',
             'url'  => 'reservas',
             'icon' => 'fas fa-check-circle',
-            'can' => 'is_admin',
+            'can' => 'is_admin' || 'is_user',
+        ],
+
+        ['header' => 'Grade de Horários'],
+        [
+            'text' => 'Grade de Horários',
+            'url'  => 'calendario',
+            'icon' => 'fas fa-fw fa-chalkboard',
+        ],
+
+        [
+            'text' => 'Gerar Crachá',
+            'url'  => 'reservas',
+            'icon' => 'fa fa-id-card',
+            'can' => 'is_student',
         ],
 
 
@@ -269,15 +289,15 @@ return [
             'text' => 'Usuários',
             'url'  => 'users',
             'icon' => 'fa fa-user-shield',
-            'can' => 'is_admin',
+            'can' => 'is_admin' || 'is_user',
         ],
 
-        ['header' => 'Paginas','can' => 'is_admin',],
+        ['header' => 'Paginas','can' => 'is_admin' || 'is_user',],
         [
             'text' => 'Solicitantes',
             'url'  => 'solicitante',
             'icon' => 'fas fa-fw fa-users',
-            'can' => 'is_admin',
+            'can' => 'is_admin' || 'is_user',
         ],
 
        // ['header' => 'Laboratorios'],
@@ -285,7 +305,7 @@ return [
             'text' => 'Laboratorios',
             'url'  => 'laboratorios',
             'icon' => 'fas fa-desktop',
-            'can' => 'is_admin',
+            'can' => 'is_admin' || 'is_user',
         ],
 
        // ['header' => 'Disciplinas dos cursos'],
@@ -293,22 +313,39 @@ return [
             'text' => 'Disciplinas',
             'url'  => 'disciplinas',
             'icon' => 'fas fa-chalkboard-teacher',
+            'can' => 'is_admin' || 'is_user',
+        ],
+
+        [
+            'text' => 'Achados e Perdidos',
+            'url'  => 'achados',
+            'icon' => 'fa fa-list',
+            'can' => 'is_admin' || 'is_user',
+        ],
+
+        [
+            'text' => 'Acesso Restrito',
+            'url'  => 'restrito',
+            'icon' => 'fa fa-tag',
+            'can' => 'is_admin' || 'is_user',
+        ],
+
+        [
+            'text' => 'Advertências ',
+            'url'  => 'advertencias',
+            'icon' => 'fa fa-exclamation-triangle',
+            'can' => 'is_admin',
+        ],
+
+        [
+            'text' => 'Relatórios',
+            'url'  => 'relatorios',
+            'icon' => 'fa fa-file-pdf',
             'can' => 'is_admin',
         ],
 
 
-       // ['header' => 'Grade de Aula'],
-        [
-            'text' => 'Grade de Horarios',
-            'url'  => 'calendario',
-            'icon' => 'fas fa-fw fa-chalkboard',
-        ],
-
-
-
-
-
-
+       
         ['header' => 'Configurações de Conta'],
         [
             'text' => 'Perfil',
