@@ -16,6 +16,7 @@ class Academicos extends Migration
         Schema::create('academicos', function (Blueprint $table) {
             $table->id();
             $table->string('ra');
+
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->rememberToken();
