@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\PseudoTypes\Numeric_;
 
 class UserFactory extends Factory
 {
@@ -22,8 +23,12 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+
+
         $email = $this->faker->unique()->safeEmail();
         $gender = $this->getGender();
+
+        //$ra = $this->unique()->random_int(11111111, 9999999999999999999999999);
         return [
             'nome' => $this->faker->name($gender),
             'email' => $email,
@@ -63,7 +68,7 @@ class UserFactory extends Factory
     }
 
     private function getProfile() : string {
-        $profiles = ['admin','user','professor','student'];
+        $profiles = ['admin','user','professor','student','student','externo'];
         shuffle($profiles);
         return $profiles[0];
     }

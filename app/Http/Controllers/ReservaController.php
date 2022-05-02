@@ -25,10 +25,9 @@ class ReservaController extends Controller
 
         $date = date('Y');
 
-        return view('reserva.index', ['reservas' => $reservas->select('reserva.*', 'users.nome as nomeUsuario', 'solicitantes.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio','tipo_reserva.tipo_reserva as tipo', 'disciplinas.nome as disciplinaNome')
+        return view('reserva.index', ['reservas' => $reservas->select('reserva.*', 'users.nome as nomeSolicitante', 'laboratorio.nome as nomeLaboratorio','tipo_reserva.tipo_reserva as tipo', 'disciplinas.nome as disciplinaNome')
         ->join('laboratorio', 'laboratorio.id', '=', 'reserva.laboratorio_id')
-        ->join('solicitantes', 'solicitantes.id', '=', 'reserva.solicitante_id')
-        ->join('users', 'users.id', '=', 'reserva.usuario_id')
+        ->join('users', 'users.id', '=', 'reserva.solicitante_id')
         ->join('disciplinas', 'disciplinas.id','=','disciplina_id')
         ->join('tipo_reserva', 'tipo_reserva.id', '=', 'tipo_reserva_id')
         ->where('data','>',$date)->get()]);
@@ -41,9 +40,11 @@ class ReservaController extends Controller
         $dadosErro = array();
         $dadosReserva = array();
         $dadosReserva2 = array();
-        $solicitantes_professores = DB::select('select * from solicitantes where tipo_solicitante_id = 1');
-        $solicitantes_externo = DB::select('select * from solicitantes where tipo_solicitante_id = 4');
-        $solicitantes_academicos = DB::select('select * from solicitantes where tipo_solicitante_id = 2');
+        $solicitantes_professores = DB::table('users')->select()->where('profile', '=', 'professor')->get();
+        $solicitantes_externo = DB::table('users')->select()->where('profile', '=', 'externo')->get();
+        $solicitantes_academicos = DB::table('users')->select()->where('profile', '=', 'student')->get();
+
+        //return response()->json($solicitantes_academicos);
         $laboratorios = DB::select('select * from laboratorio where restrito = 0 ');
         $disciplinas = DB::select('select *from disciplinas where id > 2');
         $tipo_reserva = DB::select('select * from tipo_reserva where id = 1 or id = 2');
@@ -1091,11 +1092,20 @@ class ReservaController extends Controller
 
 
 
-public function alterarStatus(Reserva $reservas, $idReserva){
+public function alterarStatus($id){
+
+    //return response()->json($id);
+
+    $id_reserva = $id;
+
+    $reservas = Reserva::find($id);
+
+    return response()->json($id_reserva);
+
+    //$reservas = DB::table('reserva')->select('reserva.*')->where('reserva.id', '=', $id)->get();
+    $status_reserva = DB::table('reserva')->select('reserva.status')->where('reserva.id', '=', $id)->value('status');
 
 
-    $reservas = DB::table('reserva')->select('reserva.*')->where('reserva.id', '=', $idReserva)->get();
-    $status_reserva = DB::table('reserva')->select('reserva.status')->where('reserva.id', '=', $idReserva)->value('status');
 
 
     if ($reservas == null) {
@@ -1104,13 +1114,13 @@ public function alterarStatus(Reserva $reservas, $idReserva){
     } elseif ($reservas !== null) {
         if ($status_reserva == 1) {
             DB::table('reserva')
-                ->where('id', $idReserva)
+                ->where('id', $id)
                 ->update(['status' => 0, 'end' =>Carbon::now()]);
                 return redirect()->route('reservas.index')->with('success', 'O Laboratorio está livre para o uso.');
         } elseif ($status_reserva == 0) {
 
             DB::table('reserva')
-                ->where('id', $idReserva)
+                ->where('id', $id)
                 ->update(['status' => 1]);
                 return redirect()->route('reservas.index')->with('info', 'O Laboratorio está reservado novamente".');
 
@@ -1339,7 +1349,7 @@ public function alterarStatus(Reserva $reservas, $idReserva){
             $reserva->end = $termino;
             $reserva->laboratorio_id = $request->laboratorio_id;
             $reserva->disciplina_id = '2';
-            $reserva->solicitante_id = $request->solicitante_id_externo;
+            $reserva->solicitante_id = $request->solicitante_id_academico;
             $reserva->color = '#1ca317';
 
             $reserva->update();

@@ -148,9 +148,12 @@
                             @if ($item->tipo_reserva_id == 3)
                                     @if ($item->status == 1)
 
-                                <a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#alteraStatus" data-id="{{ $item->id }}"><i class="fa fa-fw fa-lock"></i> </a>
+
+                                    <a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#alteraStatus" data-id="{{ $item->id }}"><i class="fa fa-fw fa-lock"></i> </a>
+                                    <a class="btn btn-warning btn-sm"  href="{{ route('reservas.alterarStatus',$item->id) }}"><i class="fa fa-fw fa-lock"></i> </a>
+
                                     @else
-                                        <button class="btn btn-sm btn-primary" disabled  href="{{ route('reserva.alterar.status',$item->id) }}" ><i class="fa fa-fw fa-unlock" ></i></button>
+                                        <button class="btn btn-sm btn-primary" disabled  href="{{ route('reservas.alterarStatus',$item->id) }}" ><i class="fa fa-fw fa-unlock" ></i></button>
 
                                     @endif
 
@@ -209,45 +212,50 @@
                 </form>
 
 
-                @foreach ($reservas as $item )
-                <form id = "FormAltera" method="POST" action="{{ route('reserva.alterar.status', $item->id) }}">
-                @endforeach
-                @method('GET')
-                @csrf
-                    <div class="modal fade" id="alteraStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
 
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-
-                                <div class="modal-body">
-                                    <p style="text-align:center">Deseja encerrar esta Reserva?</p>
-                                </div>
-
-                                <input type="hidden" name="reserva_id" id="reserva_id" value="">
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                    <button type="submit" class="btn btn-primary">Confirmar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
 
 
         </div>
+
+
 
       </div>
     </div>
 
  <!-- Modal -->
 
+ @foreach ($reservas as $reserva )
 
+ <form id = "FormAltera" method="POST" action="{{ route('reservas.alterarStatus', $reserva->id) }}">
+    @method('GET')
+    @csrf
+    @endforeach
+
+
+     <div class="modal fade" id="alteraStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+             <div class="modal-content">
+                 <div class="modal-header">
+
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                     </button>
+                 </div>
+
+                 <div class="modal-body">
+                     <p style="text-align:center">Deseja encerrar esta Reserva?</p>
+                 </div>
+                 <label>{{  $reserva->id }}</label>
+                 <input type="text" name="reserva_id" id="reserva_id" value="">
+
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                     <button type="submit" class="btn btn-primary">Confirmar</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+ </form>
 
 
 
@@ -344,7 +352,7 @@
            console.log(recipientId);
            var modal = $(this);
            modal.find("#reserva_id").val(recipientId)
-            let id = $(this).attr('data-id');
+                    let id = $(this).attr('data-id');
        });
 </script>
 
