@@ -1097,6 +1097,7 @@ public function alterarStatus($id){
     //return response()->json($id);
 
     $id_reserva = $id;
+    
 
     $reservas = Reserva::find($id);
 

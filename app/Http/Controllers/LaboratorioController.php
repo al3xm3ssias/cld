@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LaboratorioRequest;
 use App\Models\Laboratorio;
 use App\Models\Reserva;
+
 use App\Models\TipoLaboratorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
