@@ -280,7 +280,7 @@ return [
 
         [
             'text' => 'Gerar Crachá',
-            'url'  => 'reservas',
+            'url'  => '/gerar-cracha',
             'icon' => 'fa fa-id-card',
             'can' => 'is_student',
         ],

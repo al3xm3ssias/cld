@@ -28,17 +28,26 @@ class UserFactory extends Factory
         $email = $this->faker->unique()->safeEmail();
         $gender = $this->getGender();
 
-        //$ra = $this->unique()->random_int(11111111, 9999999999999999999999999);
-        return [
-            'nome' => $this->faker->name($gender),
-            'email' => $email,
-            'email_verified_at' => now(),
-            'password' => bcrypt($email), // email
-            'remember_token' => Str::random(10),
-            'status' => $this->getStatus(),
-            'gender' => $gender,
-            'profile' => $this->getProfile(),
-        ];
+        
+
+            return [
+                'nome' => $this->faker->name($gender),
+                'email' => $email,
+                'ra' => $this->faker->unique()->numerify('10######'),
+                'CPF' =>$this->faker->unique()->numerify('###########'),
+                'email_verified_at' => now(),
+                'password' => bcrypt($email), // email
+                'remember_token' => Str::random(10),
+                'status' => $this->getStatus(),
+                'gender' => $gender,
+                'profile' => $this->getProfile(),
+            ];
+
+        
+        
+
+       
+        
     }
 
     /**
@@ -68,7 +77,7 @@ class UserFactory extends Factory
     }
 
     private function getProfile() : string {
-        $profiles = ['admin','user','professor','student','student','externo'];
+        $profiles = ['admin','user','professor','student','externo'];
         shuffle($profiles);
         return $profiles[0];
     }

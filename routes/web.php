@@ -43,5 +43,14 @@ Route::get('/calendario/mostrar', [\App\Http\Controllers\CalendarioController::c
 
 Route::get('/reservas/{reserva}/alterar_status',[\App\Http\Controllers\ReservaController::class ,'alterarStatus'])->name('reservas.alterarStatus');
 
+Route::resource('/relatorios', 'App\Http\Controllers\RelatoriosController');
+
+Route::resource('/achados', 'App\Http\Controllers\AchadosController');
+
+Route::resource('/restrito', 'App\Http\Controllers\AcessoRestritoController');
+
+Route::resource('/advertencias', 'App\Http\Controllers\AdvertenciasController');
+
+Route::get('/gerar-cracha', [\App\Http\Controllers\CrachaController::class,'index']);
 
 });

@@ -17,6 +17,8 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('nome');
             $table->string('email')->unique();
+            $table->string('ra')->unique()->nullable();
+            $table->string('CPF', 14);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('status',['actived','inactived','pre_registred']);
